@@ -26,20 +26,30 @@ Session length argument: `$ARGUMENTS` (minutes). If blank, use **30**.
 
 ## Start or resume
 
-- If `PLAN.md` exists and has a session header, **resume**: read `PLAN.md` and `QUESTIONS.md`, compute the elapsed time, state the current phase and next step in 2 lines, and continue.
+- If `PLAN.md` exists and has a session header, **resume**: read `PLAN.md`, `QUESTIONS.md`, and `NOTES.md`, compute the elapsed time, state the current phase and next step in 2 lines, and continue.
 - Otherwise, **start at Phase 0**.
 
-Templates are in this skill's directory: `templates/PLAN.md` and `templates/QUESTIONS.md`.
+Templates are in this skill's directory: `templates/PLAN.md`, `templates/QUESTIONS.md`, and `templates/NOTES.md`.
+
+## Deliverables
+
+These are what the interviewer reads after the session. **If the spec lists its own deliverables, the spec wins**: use its file names, formats, and contents, and adapt or drop the defaults to match. Otherwise, hand in:
+- **Working code in this repo**, committed, with the README's "Running and testing" section.
+- **`NOTES.md`**: what was built, what was chosen not to build and why, what to do next, and any known risks.
+- **`QUESTIONS.md`**: anything in the spec that was ambiguous, and the assumption made for each.
+
+`PLAN.md` is the working state; `NOTES.md` and `QUESTIONS.md` are the hand-in, written for a reader who wasn't in the room.
 
 ## Phases
 
 Budgets are for 30 minutes; scale them proportionally for other lengths.
 
 ### Phase 0: Setup (≈1 min)
-- Record `date +%s` and the session length in the `PLAN.md` header, copied from the template. Create `QUESTIONS.md` from its template.
+- Record `date +%s` and the session length in the `PLAN.md` header, copied from the template. Create `QUESTIONS.md` and `NOTES.md` from their templates.
 - `git status`: if this isn't a repo, offer `git init`. If the tree is dirty, offer a baseline commit. Then work on a branch, e.g. `interview`.
 - Launch the **explorer** in the background (brief below).
 - Find and read the spec (`SPEC*`, `README*`, or ask). Start reading it immediately; don't wait for the explorer.
+- **Check the spec for deliverables.** Record them in the `PLAN.md` header: the spec's list if it has one, otherwise "defaults". If the spec's list differs from the defaults, say so in one line.
 
 ### Phase 1: Understand (≈3 min, ends ~4 min)
 - Write the **problem summary** in `PLAN.md`: 3–5 bullets in your own words covering the goal, users, core flow, and constraints.
@@ -62,6 +72,7 @@ The architecture is locked; the scope matrix decides which requirements get buil
 - **Cut line.** IN estimates must add up to **≤ the build budget**: about 60% of Phase 5 (≈8 min for a 30-minute session), because reviews and fixes take the rest. Show the arithmetic: "IN = 3 + 3 + 2 = 8 / 8 min". Mark the first 1–2 items below the line as STRETCH, in order. Everything else is OUT. For 30 minutes, expect **2–4 IN items**.
 - For each OUT item that the architecture must still allow, add **one line** saying what has to stay possible later. State it as a constraint, not a design. Example: "OUT: persistence. Keep money serialisable as strings."
 - **Checkpoint (scope lock):** "Here's the cut line. Lock it?" Use `AskUserQuestion` with options such as *Lock as proposed (Recommended)*, *Swap one item*, or *Tighten further*. Log the result in the decision log.
+- Once it's locked, fill in the `NOTES.md` **"What I chose not to build, and why"** from the STRETCH and OUT rows, one line each. That way the hand-in already covers the priority call if time runs short.
 
 **Ranking rules**, applied in order:
 1. **The core flow** the spec exists for, meaning the thing a demo would show, is IN.
@@ -89,7 +100,7 @@ The architecture is locked; the scope matrix decides which requirements get buil
 
 ### Phase 5: Implement in slices (≈13 min, ends ~25 min)
 - Split the IN work into 2–3 thin vertical slices, each testable on its own. Slices contain only IN items. Write a **brief** for each in `PLAN.md`: goal, scope, files, interfaces, acceptance criteria, and what is out of scope.
-- **Commit the plan (hard stop).** Before writing any code, commit `PLAN.md` and `QUESTIONS.md` on its own, e.g. `Add interview plan: architecture, scope, open questions`. Then **stop and wait**: "Plan committed (`<sha>`). Start slice 1?" Don't touch code until the candidate says go. This gives the interviewer a clean plan-vs-build boundary in the git history.
+- **Commit the plan (hard stop).** Before writing any code, commit `PLAN.md`, `QUESTIONS.md`, and `NOTES.md` on their own, e.g. `Add interview plan: architecture, scope, open questions`. Then **stop and wait**: "Plan committed (`<sha>`). Start slice 1?" Don't touch code until the candidate says go. This gives the interviewer a clean plan-vs-build boundary in the git history.
 - Build **one slice at a time**. Write the tests alongside the code. Keep each diff small enough to review in about 2 minutes, and split the slice if it isn't.
 - After each slice, run the **review loop**:
   1. Run the tests, lint, and build. Report failures verbatim; never claim it works without running it.
@@ -118,8 +129,9 @@ What the tests prove:
 
 ### Phase 6: Wrap-up (≈5 min, ends at 30)
 - Start by ~25 min even if a slice is unfinished. Leave the code working and committed; don't leave it half-built.
-- Fill in the `PLAN.md` wrap-up: done / deferred and why / known risks / next steps with more time.
-- Make sure every `QUESTIONS.md` entry has a final assumption or an answer.
+- **Finish `NOTES.md`**: what was built (by slice, with the tests that prove it), update "chose not to build" for any swaps or STRETCH items that got done, what to do next, and known risks (unhandled edge cases, skipped reviewer findings, assumptions most likely to be wrong). Keep it short and in plain language.
+- **Finish `QUESTIONS.md`**: every entry has a final assumption or the interviewer's answer, and reads on its own without this conversation.
+- **Check the deliverables** against the list in the `PLAN.md` header. Show `NOTES.md` to the candidate: "These are your notes. Change anything that isn't how you'd put it." Then commit the hand-in.
 - Run the README's commands exactly as written, to confirm they work as the interviewer will run them. Show the final run-it-yourself card.
 - Give the candidate **3–5 debrief bullets** to talk from: the key architecture call, the key priority call, the gap they spotted, a risk, and what they'd do next. Bullets only, never a script.
 

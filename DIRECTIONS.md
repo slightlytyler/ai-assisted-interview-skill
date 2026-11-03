@@ -44,6 +44,15 @@ The skill is a light process guide, not an autopilot. The interviewer has to see
 - **The files are the state.** `PLAN.md` holds the start time, the current phase, and the tracker. If the candidate runs `/interview` again mid-session (or the context gets compacted), Claude reads `PLAN.md` and picks up where it left off instead of starting over.
 - Claude tracks time by running `date` at the start and at each phase change, and tells the candidate the time used and remaining (e.g. *"12 / 30 min"*) at every checkpoint.
 
+## Deliverables
+
+Unless the spec says otherwise, the candidate hands in:
+- Working code in the repo.
+- `NOTES.md` covering what they built, what they chose not to build and why, what they'd do next, and any risks they know about.
+- `QUESTIONS.md` listing anything in the spec they found ambiguous and the assumption they made.
+
+If the spec has its own deliverables section, it wins. Claude checks for one in Phase 0 and records the list in `PLAN.md`.
+
 ## Workflow (30-minute default)
 
 Minute marks below are for 30 minutes. For other lengths, scale them proportionally.
@@ -51,7 +60,7 @@ Minute marks below are for 30 minutes. For other lengths, scale them proportiona
 ### Phase 0: Setup (0–1 min)
 - Record the start time and session length in `PLAN.md`.
 - Check git status. If it isn't a repo yet, offer to `git init`. Make a baseline commit if the tree is dirty.
-- Create skeletons for `PLAN.md` and `QUESTIONS.md`.
+- Create skeletons for `PLAN.md`, `QUESTIONS.md`, and `NOTES.md`, and record the deliverables (the spec's, or the defaults).
 
 ### Phase 1: Understand (1–4 min)
 - Read `SPEC` in full. In parallel, launch an **explorer subagent** in the background to map the repo: stack, structure, conventions, and the build/run/test commands.
@@ -71,7 +80,7 @@ Lessons from rehearsal 1: the planning discussion went deep on persistence, whic
 - **Ranking rules:** core flow → dependencies of IN → hard spec invariants are IN. Costly infrastructure (persistence, auth, concurrency) is OUT by default. Variants are STRETCH or OUT.
 - An OUT item that affects an IN item's data model gets one "keep possible later" line, not a design.
 - **Scope doesn't reopen the architecture.** Estimates are based on which locked components a requirement touches; a requirement that doesn't fit the architecture becomes a logged decision.
-- **Checkpoint (scope lock):** the candidate locks the cut line before any detailed design.
+- **Checkpoint (scope lock):** the candidate locks the cut line before any detailed design. The STRETCH and OUT rows then go into `NOTES.md` as "chose not to build, and why".
 
 ### Phase 4: Approach and spot gaps for IN items (10–12 min)
 - **Builds on the locked architecture:** the Approach doesn't redraw it; it opens by naming which components each IN item touches.
@@ -87,7 +96,7 @@ Lessons from rehearsal 1: the planning discussion went deep on persistence, whic
 ### Phase 5: Implement in slices (12–25 min)
 - Split the IN work into 2–3 thin vertical slices, each testable on its own.
 - Each slice gets a **focused brief**: goal, scope, files likely touched, interfaces to honour, acceptance criteria, and what is explicitly out of scope.
-- **Commit the plan, then stop.** `PLAN.md` and `QUESTIONS.md` get their own commit before any code is written, and Claude waits for the candidate's go-ahead. This is a hard stop, and it leaves a clean plan-vs-build boundary in the history.
+- **Commit the plan, then stop.** `PLAN.md`, `QUESTIONS.md`, and `NOTES.md` get their own commit before any code is written, and Claude waits for the candidate's go-ahead. This is a hard stop, and it leaves a clean plan-vs-build boundary in the history.
 - **Implement slices one at a time, in the main session.** That way every edit is visible to the candidate and the interviewer and goes through a permission prompt. Keep the parallelism in the background helpers (explorer, critic, researcher, reviewer), so the candidate never has to merge or juggle anything.
 - Keep the **tracker** in `PLAN.md` current: slice, agent, status, notes.
 - After each slice, run the **review loop**:
@@ -101,8 +110,9 @@ Lessons from rehearsal 1: the planning discussion went deep on persistence, whic
 - **Time checkpoints** at about 15 min and about 22 min: compare the remaining IN estimates with the time left. If behind, propose moving an IN item to OUT. If ahead, pull the next STRETCH item. Log the decision.
 
 ### Phase 6: Wrap-up (25–30 min)
-- Update `PLAN.md` with what was done, what was deferred and why, known risks, and what to do next with more time.
+- Finish `NOTES.md`: what was built, what wasn't and why, what to do next, and known risks. The candidate reads it and changes anything that isn't how they'd put it.
 - Make sure `QUESTIONS.md` shows the final assumption or answer for each gap.
+- Check every deliverable is present and committed.
 - Run the README's commands exactly as written, to confirm they work as the interviewer will run them.
 - Give the candidate a debrief of 3–5 bullets to talk from. Bullets only, never a script.
 
@@ -117,10 +127,12 @@ Lessons from rehearsal 1: the planning discussion went deep on persistence, whic
 6. Parking lot
 7. Decision log: `decision | options considered | choice | why`
 8. Tracker: `slice / agent | status | notes`
-9. Wrap-up: done / deferred / risks / next steps
 
-### `QUESTIONS.md`
-One entry per gap:
+### `NOTES.md` (deliverable)
+What was built, what was chosen not to build and why, what to do next, and known risks. Seeded from the scope matrix at scope lock and finished in wrap-up.
+
+### `QUESTIONS.md` (deliverable)
+One entry per ambiguity in the spec:
 - **Gap:** what the spec doesn't say
 - **Why it matters:** what changes in the implementation depending on the answer
 - **Assumption:** what we're going with
@@ -164,6 +176,7 @@ skill/interview/
   SKILL.md                     # the skill: phases, checkpoints, guardrails, subagent briefs
   templates/PLAN.md            # skeleton for PLAN.md
   templates/QUESTIONS.md       # skeleton for QUESTIONS.md
+  templates/NOTES.md           # skeleton for NOTES.md
 install.sh                     # symlinks skill/interview/ to ~/.claude/skills/interview/
 playground/                    # rehearsal starter repo (SPEC.md + small Python package)
 new-playground.sh              # copies playground/ to a fresh git repo for each rehearsal

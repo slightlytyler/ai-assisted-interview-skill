@@ -1,6 +1,6 @@
 # Questions & assumptions
 
-Gaps in the spec that would meaningfully change the implementation.
+Anything in the spec that was ambiguous, and the assumption made for each.
 
 ## Q1 — <short title>
 - **Gap:** what the spec doesn't say

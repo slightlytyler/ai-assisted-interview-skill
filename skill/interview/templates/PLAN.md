@@ -1,6 +1,7 @@
 # Plan
 
 **Started:** <human time> (`<epoch>`) · **Length:** <N> min · **Phase:** 0 Setup
+**Deliverables:** defaults (code + README "Running and testing", `NOTES.md`, `QUESTIONS.md`) | from spec: <list>
 
 ## Problem summary
 - 
@@ -52,9 +53,3 @@ Build budget: **<B> min** (≈60% of Phase 3) · IN total: **<sum> / <B> min**
 - Interfaces:
 - Acceptance:
 - Out of scope:
-
-## Wrap-up
-- **Done:**
-- **Deferred (and why):**
-- **Known risks:**
-- **Next, with more time:**
