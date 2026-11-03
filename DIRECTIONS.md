@@ -68,7 +68,7 @@ Lessons from rehearsal 1: the planning discussion went deep on persistence, whic
 - **Approach sketch, IN items only:** components, data model, interfaces, and build order, at system design altitude, in a few bullets.
 - **Spec gaps** in `QUESTIONS.md`, for IN items plus any OUT item that would force a data-model change. Look actively for at least one gap that would meaningfully change the build. The article singles this out as what set the strong candidate apart.
 - **In the background:** a **critic subagent** reviews the plan, assumptions, and scope arithmetic. Add **researcher subagents** only if a library or approach decision is actually open.
-- **Checkpoint:** show the critic's findings (Claude does not apply them silently). Then prompt: *"These N questions are 'stop and check'. Worth asking the interviewer now before we build."* Fold the answers into `QUESTIONS.md`.
+- **Checkpoint:** show the critic's findings **one at a time**, most severe first, so the candidate decides on each without being overwhelmed (Claude does not apply them silently). Then prompt: *"These N questions are 'stop and check'. Worth asking the interviewer now before we build."* Fold the answers into `QUESTIONS.md`.
 
 ### Keeping scope locked (all phases)
 - **Parking lot:** when discussion drifts to a STRETCH or OUT item, Claude names it, parks a one-line note in `PLAN.md`, and steers back. Spend ≤1 min on it.
@@ -77,6 +77,7 @@ Lessons from rehearsal 1: the planning discussion went deep on persistence, whic
 ### Phase 3: Implement in slices (10–25 min)
 - Split the IN work into 2–3 thin vertical slices, each testable on its own.
 - Each slice gets a **focused brief**: goal, scope, files likely touched, interfaces to honour, acceptance criteria, and what is explicitly out of scope.
+- **Commit the plan, then stop.** `PLAN.md` and `QUESTIONS.md` get their own commit before any code is written, and Claude waits for the candidate's go-ahead. This is the one hard stop, and it leaves a clean plan-vs-build boundary in the history.
 - **Implement slices one at a time, in the main session.** That way every edit is visible to the candidate and the interviewer and goes through a permission prompt. Keep the parallelism in the background helpers (explorer, critic, researcher, reviewer), so the candidate never has to merge or juggle anything.
 - Keep the **tracker** in `PLAN.md` current: slice, agent, status, notes.
 - After each slice, run the **review loop**:
@@ -84,7 +85,7 @@ Lessons from rehearsal 1: the planning discussion went deep on persistence, whic
   2. A **reviewer subagent** critiques the diff: correctness, edge cases, slop, consistency with repo conventions.
   3. Claude gives a short diff summary that says *where to look*: non-obvious logic, risky spots, places it guessed.
   4. Claude shows a **run-it-yourself card**, unprompted, after the first slice and again whenever the commands change. It has copy-pasteable `!`-prefixed commands for all tests, this slice's tests, a single test, and a one-line way to try the new behaviour, plus a test → requirement mapping. Running the tests themselves is how the candidate shows they understand the code, and they shouldn't have to interrupt Claude to find out how.
-  5. **Checkpoint:** *"Run the tests yourself and take a minute on the diff. Accept, change, or reject?"*
+  5. **Checkpoint:** *"Run the tests yourself and take a minute on the diff. Accept, change, or reject?"* Reviewer findings are raised **one question at a time**, most severe first; a list of five at once is overwhelming mid-interview.
   6. Keep the `README.md` **Running and testing** section in sync. Commit with a meaningful message; the git history should tell the story.
 - **Time checkpoints** at about 15 min and about 22 min: compare the remaining IN estimates with the time left. If behind, propose moving an IN item to OUT. If ahead, pull the next STRETCH item. Log the decision.
 

@@ -15,13 +15,14 @@ Session length argument: `$ARGUMENTS` (minutes). If blank, use **30**.
 
 1. **Candidate decides.** For any meaningful choice (priority, architecture, library, assumption, scope cut), give 2–3 options with one-line tradeoffs and mark your recommendation. Use `AskUserQuestion` so the candidate can answer in one click. Never make a product or architecture decision silently.
 2. **Log every decision** in the `PLAN.md` decision log: decision | options | choice | why. Keep it to one line each.
-3. **Soft checkpoints, not hard stops.** At each checkpoint below, pause with a one-line prompt (e.g. "Review this diff?" or "Run the critic on the plan?"). If the candidate says go, go.
+3. **Soft checkpoints, not hard stops.** At each checkpoint below, pause with a one-line prompt (e.g. "Review this diff?" or "Run the critic on the plan?"). If the candidate says go, go. The one exception is the **plan commit** at the start of Phase 3, which is a hard stop.
 4. **Be brief.** Every word you write uses up the candidate's clock. Use tables and bullets, never restate the spec, and keep each summary under about 8 lines.
 5. **Track time.** Run `date +%s` at the start of each phase and at each checkpoint. Begin each checkpoint message with `⏱ <used>/<total> min`, and warn when a phase runs over its budget.
 6. **The files are the state.** Keep the `PLAN.md` session header (start epoch, length, phase) and tracker current, so the session can resume from them.
 7. **Run helpers in the background.** You launch and track the explorer, critic, researcher, and reviewer subagents; the candidate never manages them. Record each one in the tracker. Tell the candidate when a helper is launched and when it returns, in one line each.
 8. **Scope comes before design.** Lock the in/out matrix before discussing how to build anything, and only IN items get design time.
 9. **Implement in the main session**, from the approved brief for each slice, so every edit is visible and goes through a permission prompt. Never hand the raw spec to any agent as the work order.
+10. **One finding at a time.** When the reviewer or critic returns, never dump the whole list. Say how many findings there are in one line, then raise them **one per `AskUserQuestion`**, most severe first, each with the finding, file:line if any, and your recommendation. Act on the answer, then ask the next. The candidate can say "skip the rest" at any point.
 
 ## Start or resume
 
@@ -64,7 +65,7 @@ Do this **before** any design discussion. No requirement gets designed until the
 - **Design depth follows scope.** Sketch an approach only for IN items, at system design altitude, in ≤6 bullets: components, data model, key interfaces, build order. Use the repo's existing conventions.
 - **Spec gaps → `QUESTIONS.md`.** Hunt for gaps in IN items, plus any OUT item that would force a data-model change. Classify each one with the heuristic below. Find **at least one** gap that most people would sail past. Good places to look: units and precision, ordering and concurrency, identity and uniqueness, error and edge behaviour, data lifecycle (delete, edit, expiry), time zones, scale assumptions, and wording that reads as more than one requirement.
 - Launch the **critic** in the background on `PLAN.md` and `QUESTIONS.md`. Launch a **researcher** only if an IN decision is actually open.
-- **Checkpoint:** show the critic's top findings, ≤5 bullets, and let the candidate choose which to act on. Don't apply them silently. Then: "These are the *stop-and-check* questions. Worth asking the interviewer now:" followed by the list, each phrased as a question the candidate can ask out loud. Record the answers in `QUESTIONS.md`.
+- **Checkpoint:** walk through the critic's findings **one at a time** (rule 10), letting the candidate choose whether to act on each. Don't apply them silently. Then: "These are the *stop-and-check* questions. Worth asking the interviewer now:" followed by the list, each phrased as a question the candidate can ask out loud. Record the answers in `QUESTIONS.md`.
 
 ### Keeping scope locked (all phases)
 - **Parking lot.** When the discussion drifts into a STRETCH or OUT item, say so in one line, e.g. "R8 is OUT. Parked: <one-line note>. Back to <current item>." Put the note in the `PLAN.md` parking lot, and spend no more than ~1 minute on it.
@@ -78,13 +79,14 @@ Do this **before** any design discussion. No requirement gets designed until the
 
 ### Phase 3: Implement in slices (≈15 min, ends ~25 min)
 - Split the IN work into 2–3 thin vertical slices, each testable on its own. Slices contain only IN items. Write a **brief** for each in `PLAN.md`: goal, scope, files, interfaces, acceptance criteria, and what is out of scope.
+- **Commit the plan (hard stop).** Before writing any code, commit `PLAN.md` and `QUESTIONS.md` on its own, e.g. `Add interview plan: scope, design, open questions`. Then **stop and wait**: "Plan committed (`<sha>`). Start slice 1?" Don't touch code until the candidate says go. This gives the interviewer a clean plan-vs-build boundary in the git history.
 - Build **one slice at a time**. Write the tests alongside the code. Keep each diff small enough to review in about 2 minutes, and split the slice if it isn't.
 - After each slice, run the **review loop**:
   1. Run the tests, lint, and build. Report failures verbatim; never claim it works without running it.
   2. Launch the **reviewer** in the background on the diff.
   3. Give a diff summary of ≤6 lines that says **where to look**: non-obvious logic, risky spots, and anything you guessed.
   4. Show the **run-it-yourself card** (format below) **without being asked**, so the candidate can run and poke at the code without having to stop and ask you how. Always show it after the first slice. After later slices, show only what changed.
-  5. **Checkpoint:** "Run the tests yourself and take a minute on the diff (`git diff`). Accept, change, or reject?" Fold in the reviewer findings the candidate agrees with.
+  5. **Checkpoint:** "Run the tests yourself and take a minute on the diff (`git diff`). Accept, change, or reject?" Then walk through the reviewer findings **one at a time** (rule 10), e.g. *Fix now (Recommended)* / *Skip* / *Note as a known risk*, and fold in only the ones the candidate agrees with.
   6. Update the `README.md` **Running and testing** section (format below) if any commands changed, and commit it with the slice. The commit message should explain *what and why*. Update the tracker.
 
 **Run-it-yourself card.** Use commands you have actually run this session, copied exactly. Prefix each one with `!` so the candidate can paste it straight into the Claude Code prompt and it runs in this session. Keep the card to ≤10 lines:
@@ -127,7 +129,7 @@ Keep each brief self-contained; subagents don't see this conversation. Ask each 
 ## Guardrails
 
 - Never suggest or use `--dangerously-skip-permissions` or blanket auto-accept.
-- Never write code before the plan has had a checkpoint.
+- Never write code before `PLAN.md` is committed and the candidate has said go.
 - No speculative abstraction, gold-plating, or features the plan doesn't call for.
 - Don't add dependencies without a logged decision.
 - Don't script the candidate's spoken answers.
