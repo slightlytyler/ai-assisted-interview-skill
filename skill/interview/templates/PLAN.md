@@ -7,6 +7,14 @@
 
 **Stack / commands:** 
 
+## Architecture (locked)
+_The candidate's broad strokes, locked at <time>._
+```
+<components and data flow; transcribed from the candidate's diagram if they shared one>
+```
+- **<component>:** responsibility · maps to `<repo path>`
+- **Data / interfaces:** 
+
 ## Scope matrix
 Build budget: **<B> min** (≈60% of Phase 3) · IN total: **<sum> / <B> min**
 
@@ -21,10 +29,7 @@ Build budget: **<B> min** (≈60% of Phase 3) · IN total: **<sum> / <B> min**
 - 
 
 ## Approach (IN items only)
-**Architecture overview:**
-```
-<components and data flow, showing where new code fits into the repo>
-```
+**Components touched:** R1 → <component>, R2 → <component>
 
 - 
 

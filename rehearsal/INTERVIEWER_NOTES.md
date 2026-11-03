@@ -27,10 +27,11 @@ Other cuts are fine if they're deliberate and explained.
 
 ## Self-score after a rehearsal (1–5)
 
-- [ ] **Prioritisation:** scope locked by ~7 min with the minute arithmetic shown, no design time spent on OUT items, any re-prioritisation done as a logged swap
+- [ ] **System design:** gave the architecture in your own broad strokes (diagram if drawn), sharpened and locked by ~8 min
+- [ ] **Prioritisation:** scope locked by ~10 min with the minute arithmetic shown, no design time spent on OUT items, any re-prioritisation done as a logged swap
 - [ ] **Decision quality:** decision log is crisp, and each decision can be explained in one sentence
 - [ ] **Spotting risk:** found the rounding gap, and ideally the float and "minimum" traps too
 - [ ] **Steering:** gave the agent briefs, not the raw spec, and pushed back on at least one suggestion
 - [ ] **Workflow:** used the background explorer, critic, and reviewer, and kept the tracker current
 - [ ] **Code quality:** read every diff, small commits, tests cover the invariant
-- [ ] **Time:** plan done by ~10 min, wrap-up started by ~25 min
+- [ ] **Time:** plan done by ~12 min, wrap-up started by ~25 min

@@ -29,7 +29,8 @@ The skill is a light process guide, not an autopilot. The interviewer has to see
 
 | Attribute | What the skill does |
 |---|---|
-| **Prioritisation** | Builds a scope matrix with minute estimates and a cut line (IN / STRETCH / OUT), and locks it before any design work. New priorities come in as explicit swaps, never additions. Re-checks against the clock at time checkpoints. |
+| **System design** | Right after the problem summary, the candidate gives the architecture in broad strokes (often a diagram drawn with the interviewer). Claude captures it in `PLAN.md`, raises at most a few sharpening questions, and locks it. |
+| **Prioritisation** | Builds a scope matrix with minute estimates and a cut line (IN / STRETCH / OUT) against the locked architecture, and locks it before any detailed design. New priorities come in as explicit swaps, never additions. Re-checks against the clock at time checkpoints. |
 | **Decision quality** | Offers options with tradeoffs, asks the candidate to choose, and logs each choice with its reason in a decision log. |
 | **Spotting risk** | Finds spec gaps and sorts each one as "safe to assume" or "stop and ask" (see heuristic below). Records them in `QUESTIONS.md` and prompts the candidate to ask the interviewer about the risky ones. |
 | **Steering, not just prompting** | Implementation agents get focused briefs taken from the approved plan, never the raw spec. |
@@ -52,22 +53,29 @@ Minute marks below are for 30 minutes. For other lengths, scale them proportiona
 - Check git status. If it isn't a repo yet, offer to `git init`. Make a baseline commit if the tree is dirty.
 - Create skeletons for `PLAN.md` and `QUESTIONS.md`.
 
-### Phase 1: Understand (1–5 min)
+### Phase 1: Understand (1–4 min)
 - Read `SPEC` in full. In parallel, launch an **explorer subagent** in the background to map the repo: stack, structure, conventions, and the build/run/test commands.
 - Write a problem summary of 3–5 bullets in `PLAN.md`, in Claude's own words.
 - **Checkpoint:** *"Does this match your read of the spec?"*
 
-### Phase 2a: Triage and lock scope (5–7 min)
+### Phase 2: System design and lock the architecture (4–8 min)
+This is the system design part of the interview, so the architecture comes from the candidate, not Claude.
+- Claude asks for the **broad strokes**: main components, data flow, where state lives, key boundaries. If the candidate drew a diagram with the interviewer, they paste a screenshot and Claude reads it.
+- Claude **captures** it in the `PLAN.md` Architecture section as a small ASCII diagram plus a few bullets, mapped onto the existing repo. It doesn't propose its own architecture unless the candidate asks for a straw man.
+- Claude **sharpens, doesn't redesign**: at most 3 flags (conflicts with the spec or repo, or ambiguities), asked one at a time.
+- **Lock (hard stop):** the candidate locks the architecture. After that it changes only through a logged decision.
+
+### Phase 3: Triage and lock scope (8–10 min)
 Lessons from rehearsal 1: the planning discussion went deep on persistence, which was never built. Seven "Musts" didn't fit, and an interviewer concern got added to scope without anything coming out.
-- **Scope matrix:** each requirement gets an estimate in minutes, a running total, and a call: **IN / STRETCH / OUT**. IN must fit the build budget, about 60% of Phase 3 (≈9 min for a 30-minute session), and the arithmetic is shown.
+- **Scope matrix:** each requirement gets an estimate in minutes, a running total, and a call: **IN / STRETCH / OUT**. IN must fit the build budget, about 60% of Phase 5 (≈8 min for a 30-minute session), and the arithmetic is shown.
 - **Ranking rules:** core flow → dependencies of IN → hard spec invariants are IN. Costly infrastructure (persistence, auth, concurrency) is OUT by default. Variants are STRETCH or OUT.
 - An OUT item that affects an IN item's data model gets one "keep possible later" line, not a design.
-- **No architecture during scope.** Scope covers what and why, never how. If components, patterns, or storage come up, Claude parks them for the Approach.
-- **Checkpoint (scope lock):** the candidate locks the cut line before any design discussion.
+- **Scope doesn't reopen the architecture.** Estimates are based on which locked components a requirement touches; a requirement that doesn't fit the architecture becomes a logged decision.
+- **Checkpoint (scope lock):** the candidate locks the cut line before any detailed design.
 
-### Phase 2b: Approach and spot gaps for IN items (7–10 min)
-- **Architecture overview first:** the Approach always opens with a high-level view of the components and data flow (a small diagram or 2–3 lines), showing where the new code fits into the repo.
-- **Approach sketch, IN items only:** data model, interfaces, and build order, at system design altitude, in a few bullets.
+### Phase 4: Approach and spot gaps for IN items (10–12 min)
+- **Builds on the locked architecture:** the Approach doesn't redraw it; it opens by naming which components each IN item touches.
+- **Approach sketch, IN items only:** data model, interfaces, and build order, in a few bullets.
 - **Spec gaps** in `QUESTIONS.md`, for IN items plus any OUT item that would force a data-model change. Look actively for at least one gap that would meaningfully change the build. The article singles this out as what set the strong candidate apart.
 - **In the background:** a **critic subagent** reviews the plan, assumptions, and scope arithmetic. Add **researcher subagents** only if a library or approach decision is actually open.
 - **Checkpoint:** show the critic's findings **one at a time**, most severe first, so the candidate decides on each without being overwhelmed (Claude does not apply them silently). Then prompt: *"These N questions are 'stop and check'. Worth asking the interviewer now before we build."* Fold the answers into `QUESTIONS.md`.
@@ -76,10 +84,10 @@ Lessons from rehearsal 1: the planning discussion went deep on persistence, whic
 - **Parking lot:** when discussion drifts to a STRETCH or OUT item, Claude names it, parks a one-line note in `PLAN.md`, and steers back. Spend ≤1 min on it.
 - **Swaps, never additions:** if an interviewer answer or critic finding raises an OUT item's priority, Claude presents a trade: cut A, cut B, or keep it OUT and design it on paper only (~2 min, written as the first "Next step"). The candidate decides, and the swap is logged.
 
-### Phase 3: Implement in slices (10–25 min)
+### Phase 5: Implement in slices (12–25 min)
 - Split the IN work into 2–3 thin vertical slices, each testable on its own.
 - Each slice gets a **focused brief**: goal, scope, files likely touched, interfaces to honour, acceptance criteria, and what is explicitly out of scope.
-- **Commit the plan, then stop.** `PLAN.md` and `QUESTIONS.md` get their own commit before any code is written, and Claude waits for the candidate's go-ahead. This is the one hard stop, and it leaves a clean plan-vs-build boundary in the history.
+- **Commit the plan, then stop.** `PLAN.md` and `QUESTIONS.md` get their own commit before any code is written, and Claude waits for the candidate's go-ahead. This is a hard stop, and it leaves a clean plan-vs-build boundary in the history.
 - **Implement slices one at a time, in the main session.** That way every edit is visible to the candidate and the interviewer and goes through a permission prompt. Keep the parallelism in the background helpers (explorer, critic, researcher, reviewer), so the candidate never has to merge or juggle anything.
 - Keep the **tracker** in `PLAN.md` current: slice, agent, status, notes.
 - After each slice, run the **review loop**:
@@ -92,7 +100,7 @@ Lessons from rehearsal 1: the planning discussion went deep on persistence, whic
   7. Keep the `README.md` **Running and testing** section in sync. Commit with a meaningful message; the git history should tell the story.
 - **Time checkpoints** at about 15 min and about 22 min: compare the remaining IN estimates with the time left. If behind, propose moving an IN item to OUT. If ahead, pull the next STRETCH item. Log the decision.
 
-### Phase 4: Wrap-up (25–30 min)
+### Phase 6: Wrap-up (25–30 min)
 - Update `PLAN.md` with what was done, what was deferred and why, known risks, and what to do next with more time.
 - Make sure `QUESTIONS.md` shows the final assumption or answer for each gap.
 - Run the README's commands exactly as written, to confirm they work as the interviewer will run them.
@@ -103,12 +111,13 @@ Lessons from rehearsal 1: the planning discussion went deep on persistence, whic
 ### `PLAN.md`
 1. Session header: start time, length, current phase
 2. Problem summary
-3. Scope matrix (estimate, running total, IN / STRETCH / OUT, cut line, keep-possible-later notes)
-4. Approach (IN items only), opening with a high-level architecture overview
-5. Parking lot
-6. Decision log: `decision | options considered | choice | why`
-7. Tracker: `slice / agent | status | notes`
-8. Wrap-up: done / deferred / risks / next steps
+3. Architecture (locked): the candidate's broad strokes as an ASCII diagram plus a few bullets
+4. Scope matrix (estimate, running total, IN / STRETCH / OUT, cut line, keep-possible-later notes)
+5. Approach (IN items only): components touched, data model, interfaces, build order
+6. Parking lot
+7. Decision log: `decision | options considered | choice | why`
+8. Tracker: `slice / agent | status | notes`
+9. Wrap-up: done / deferred / risks / next steps
 
 ### `QUESTIONS.md`
 One entry per gap:
@@ -132,16 +141,17 @@ All subagents are launched and tracked by Claude through Claude Code's built-in 
 | Agent | When | Runs | Job |
 |---|---|---|---|
 | Explorer | Phase 1 | Background | Map repo structure, conventions, build/test commands |
-| Critic | Phase 2, and on request | Background | Find holes in the plan and assumptions |
-| Researcher | Phase 2, only if a decision is open | Background | Compare libraries/approaches for one specific decision |
-| Implementer | Phase 3 | Main session | Build one slice from a focused brief. Runs in the main session so every edit is visible and permission-prompted |
-| Reviewer | Phase 3, after each slice | Background | Critique the diff before the candidate reviews it |
+| Critic | Phase 4, and on request | Background | Find holes in the plan and assumptions |
+| Researcher | Phase 4, only if a decision is open | Background | Compare libraries/approaches for one specific decision |
+| Implementer | Phase 5 | Main session | Build one slice from a focused brief. Runs in the main session so every edit is visible and permission-prompted |
+| Reviewer | Phase 5, after each slice | Background | Critique the diff before the candidate reviews it |
 
 ## Guardrails (never do)
 
 - Never suggest or use `--dangerously-skip-permissions` or blanket auto-accept.
 - Never hand the raw spec to an implementation agent.
 - Never make a product or architecture decision silently. Surface it, recommend, and ask.
+- Never author the architecture for the candidate unless they ask for a straw man.
 - Never produce a diff too large to review in a couple of minutes. Split the slice instead.
 - Never claim something works without running it.
 - No speculative abstraction, no gold-plating, no features the plan doesn't call for.
