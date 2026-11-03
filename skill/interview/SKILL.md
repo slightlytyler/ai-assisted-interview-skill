@@ -54,16 +54,21 @@ Budgets are for 30 minutes; scale them proportionally for other lengths.
 ### Phase 1: Understand (≈3 min, ends ~4 min)
 - Write the **problem summary** in `PLAN.md`: 3–5 bullets in your own words covering the goal, users, core flow, and constraints.
 - When the explorer returns, add the stack and the build/test commands to `PLAN.md` in one line. **Run the test command once yourself** to confirm it works and to see the baseline result. The run-it-yourself card later depends on it.
-- **Checkpoint:** "Does this match your read of the spec? Next is system design: your broad strokes."
+- **Checkpoint:** "Does this match your read of the spec? Next is system design: I'll open the Architecture section in `PLAN.md` for you."
 
 ### Phase 2: System design and lock the architecture (≈4 min, ends ~8 min)
 This is the system design part of the interview, so the architecture comes from the **candidate**. You are the scribe and the sharpener, not the author.
-- **Ask for the broad strokes.** One prompt: "Give me the broad strokes: the main components, how data flows between them, where state lives, and the key boundaries. If you sketched a diagram with the interviewer, paste a screenshot or give me the file path." Read any image they share. Don't propose an architecture first. Offer a straw man only if the candidate asks for one, and label it as a draft for them to change.
-- **Capture it** in the `PLAN.md` **Architecture** section, in the candidate's terms:
-  - a small ASCII diagram of the components and data flow (transcribe theirs if they shared one);
-  - ≤5 bullets: each component's responsibility, the key interfaces or data model at a high level, and where it maps onto the existing repo (from the explorer).
+- **Open the section.** In the `PLAN.md` **Architecture** section, set the status to `OPEN: your turn` and fill in the one-line *Existing repo, for reference* from the explorer. Leave the prompts under each heading empty. Don't pre-fill any architecture.
+- **Hand over and wait.** One message: "Architecture is open in `PLAN.md`. Write your broad strokes there: components, data flow, where state lives, key boundaries. Any form is fine. If you sketched a diagram with the interviewer, paste a screenshot here. Say 'done' when you're ready." Then **stop and wait**. Don't edit `PLAN.md` while the candidate is writing in it. If they'd rather talk it through in chat, that's fine too: capture what they say into the section the same way.
+- **Don't author it.** Offer a straw man only if the candidate asks for one. Give it in chat, labelled as a draft, and write it into the section only if they adopt it.
+- **Read and capture.** When they say done, re-read `PLAN.md` first, since it has changed on disk. **Keep their words.** You may only:
+  - tidy the formatting;
+  - transcribe a pasted diagram, or the data flow they described, into a small ASCII diagram under *Diagram*;
+  - add `→ <repo path>` to each component, mapping it onto the existing repo.
+
+  Anything more than that, such as filling a gap they left or changing a choice, is a flag (next step), not an edit.
 - **Sharpen, don't redesign.** Raise at most 3 flags, **one at a time** (rule 10): something that conflicts with the spec, something that conflicts with the repo, or an ambiguity in the sketch (e.g. "Where does the balance get computed: in the ledger or on read?"). Each comes with your recommendation; the candidate decides.
-- **Lock (hard stop).** Show the captured diagram and ask with `AskUserQuestion`: *Lock it (Recommended)* / *Adjust something first*. Don't move on until it's locked. Log the lock and any choices made along the way in the decision log.
+- **Lock (hard stop).** Show the captured diagram and ask with `AskUserQuestion`: *Lock it (Recommended)* / *Adjust something first*. Don't move on until it's locked. Then set the status to `LOCKED at <time>` and log the lock and any choices made along the way in the decision log.
 - **After the lock,** the architecture changes only through a logged decision: present the change as options with `AskUserQuestion`, including *Keep the architecture as locked*.
 
 ### Phase 3: Triage and lock scope (≈2 min, ends ~10 min)

@@ -8,16 +8,31 @@
 
 **Stack / commands:** 
 
-## Architecture (locked)
-_The candidate's broad strokes, locked at <time>._
+## Architecture
+**Status:** NOT OPEN YET (opens in Phase 2)
+_Existing repo, for reference:_ <key modules from the explorer>
+
+<!-- Candidate: write your broad strokes under each heading, in any form (bullets, fragments, ASCII). -->
+
+### Components and responsibilities
+- 
+
+### Data flow
+- 
+
+### Where state lives
+- 
+
+### Key boundaries and interfaces
+- 
+
+### Diagram
 ```
-<components and data flow; transcribed from the candidate's diagram if they shared one>
+<sketch in ASCII here, or paste a screenshot in chat>
 ```
-- **<component>:** responsibility · maps to `<repo path>`
-- **Data / interfaces:** 
 
 ## Scope matrix
-Build budget: **<B> min** (≈60% of Phase 3) · IN total: **<sum> / <B> min**
+Build budget: **<B> min** (≈60% of Phase 5) · IN total: **<sum> / <B> min**
 
 | # | Requirement | Rule | Est (min) | Running | Call | Why |
 |---|---|---|---|---|---|---|

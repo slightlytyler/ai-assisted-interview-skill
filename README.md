@@ -37,7 +37,7 @@ The phases, with timings for a 30-minute session:
 |---|---|---|
 | 0 Setup | ~1 min | Branch, plan files, background repo explorer, read the spec |
 | 1 Understand | ~4 min | Problem summary, test command confirmed |
-| 2 System design | ~8 min | You give the architecture in broad strokes (paste a screenshot of any diagram), and Claude captures and locks it |
+| 2 System design | ~8 min | Claude opens the Architecture section in `PLAN.md`, you write your broad strokes there (and paste a screenshot of any diagram), then Claude tidies and locks it |
 | 3 Scope | ~10 min | Requirement matrix with minute estimates and an IN / STRETCH / OUT cut line |
 | 4 Approach and gaps | ~12 min | Design for IN items, spec gaps, critic review, questions to ask the interviewer |
 | 5 Implement | ~25 min | Plan committed, then thin slices, each one reviewed by you first and then by a reviewer agent |

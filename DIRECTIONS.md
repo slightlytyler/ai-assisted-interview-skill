@@ -29,7 +29,7 @@ The skill is a light process guide, not an autopilot. The interviewer has to see
 
 | Attribute | What the skill does |
 |---|---|
-| **System design** | Right after the problem summary, the candidate gives the architecture in broad strokes (often a diagram drawn with the interviewer). Claude captures it in `PLAN.md`, raises at most a few sharpening questions, and locks it. |
+| **System design** | Right after the problem summary, the candidate writes the architecture in broad strokes straight into `PLAN.md` (often alongside a diagram drawn with the interviewer). Claude tidies it, raises at most a few sharpening questions, and locks it. |
 | **Prioritisation** | Builds a scope matrix with minute estimates and a cut line (IN / STRETCH / OUT) against the locked architecture, and locks it before any detailed design. New priorities come in as explicit swaps, never additions. Re-checks against the clock at time checkpoints. |
 | **Decision quality** | Offers options with tradeoffs, asks the candidate to choose, and logs each choice with its reason in a decision log. |
 | **Spotting risk** | Finds spec gaps and sorts each one as "safe to assume" or "stop and ask" (see heuristic below). Records them in `QUESTIONS.md` and prompts the candidate to ask the interviewer about the risky ones. |
@@ -69,8 +69,8 @@ Minute marks below are for 30 minutes. For other lengths, scale them proportiona
 
 ### Phase 2: System design and lock the architecture (4–8 min)
 This is the system design part of the interview, so the architecture comes from the candidate, not Claude.
-- Claude asks for the **broad strokes**: main components, data flow, where state lives, key boundaries. If the candidate drew a diagram with the interviewer, they paste a screenshot and Claude reads it.
-- Claude **captures** it in the `PLAN.md` Architecture section as a small ASCII diagram plus a few bullets, mapped onto the existing repo. It doesn't propose its own architecture unless the candidate asks for a straw man.
+- Claude **opens the Architecture section** in `PLAN.md`: empty prompts for components, data flow, where state lives, key boundaries, and a diagram, plus a one-line pointer to the existing repo's modules. The candidate writes their **broad strokes** there instead of typing them into the chat box, then says "done". If they drew a diagram with the interviewer, they paste a screenshot and Claude reads it.
+- Claude **keeps the candidate's words**. It only tidies formatting, transcribes the diagram into ASCII, and maps each component onto the repo. It doesn't propose its own architecture unless the candidate asks for a straw man.
 - Claude **sharpens, doesn't redesign**: at most 3 flags (conflicts with the spec or repo, or ambiguities), asked one at a time.
 - **Lock (hard stop):** the candidate locks the architecture. After that it changes only through a logged decision.
 
@@ -121,7 +121,7 @@ Lessons from rehearsal 1: the planning discussion went deep on persistence, whic
 ### `PLAN.md`
 1. Session header: start time, length, current phase
 2. Problem summary
-3. Architecture (locked): the candidate's broad strokes as an ASCII diagram plus a few bullets
+3. Architecture: the candidate's own broad strokes (components, data flow, state, boundaries, diagram), with a status of not open, open, or locked
 4. Scope matrix (estimate, running total, IN / STRETCH / OUT, cut line, keep-possible-later notes)
 5. Approach (IN items only): components touched, data model, interfaces, build order
 6. Parking lot
