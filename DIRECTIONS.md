@@ -62,10 +62,12 @@ Lessons from rehearsal 1: the planning discussion went deep on persistence, whic
 - **Scope matrix:** each requirement gets an estimate in minutes, a running total, and a call: **IN / STRETCH / OUT**. IN must fit the build budget, about 60% of Phase 3 (≈9 min for a 30-minute session), and the arithmetic is shown.
 - **Ranking rules:** core flow → dependencies of IN → hard spec invariants are IN. Costly infrastructure (persistence, auth, concurrency) is OUT by default. Variants are STRETCH or OUT.
 - An OUT item that affects an IN item's data model gets one "keep possible later" line, not a design.
+- **No architecture during scope.** Scope covers what and why, never how. If components, patterns, or storage come up, Claude parks them for the Approach.
 - **Checkpoint (scope lock):** the candidate locks the cut line before any design discussion.
 
-### Phase 2b: Design and spot gaps for IN items (7–10 min)
-- **Approach sketch, IN items only:** components, data model, interfaces, and build order, at system design altitude, in a few bullets.
+### Phase 2b: Approach and spot gaps for IN items (7–10 min)
+- **Architecture overview first:** the Approach always opens with a high-level view of the components and data flow (a small diagram or 2–3 lines), showing where the new code fits into the repo.
+- **Approach sketch, IN items only:** data model, interfaces, and build order, at system design altitude, in a few bullets.
 - **Spec gaps** in `QUESTIONS.md`, for IN items plus any OUT item that would force a data-model change. Look actively for at least one gap that would meaningfully change the build. The article singles this out as what set the strong candidate apart.
 - **In the background:** a **critic subagent** reviews the plan, assumptions, and scope arithmetic. Add **researcher subagents** only if a library or approach decision is actually open.
 - **Checkpoint:** show the critic's findings **one at a time**, most severe first, so the candidate decides on each without being overwhelmed (Claude does not apply them silently). Then prompt: *"These N questions are 'stop and check'. Worth asking the interviewer now before we build."* Fold the answers into `QUESTIONS.md`.
@@ -85,8 +87,9 @@ Lessons from rehearsal 1: the planning discussion went deep on persistence, whic
   2. A **reviewer subagent** critiques the diff: correctness, edge cases, slop, consistency with repo conventions.
   3. Claude gives a short diff summary that says *where to look*: non-obvious logic, risky spots, places it guessed.
   4. Claude shows a **run-it-yourself card**, unprompted, after the first slice and again whenever the commands change. It has copy-pasteable `!`-prefixed commands for all tests, this slice's tests, a single test, and a one-line way to try the new behaviour, plus a test → requirement mapping. Running the tests themselves is how the candidate shows they understand the code, and they shouldn't have to interrupt Claude to find out how.
-  5. **Checkpoint:** *"Run the tests yourself and take a minute on the diff. Accept, change, or reject?"* Reviewer findings are raised **one question at a time**, most severe first; a list of five at once is overwhelming mid-interview.
-  6. Keep the `README.md` **Running and testing** section in sync. Commit with a meaningful message; the git history should tell the story.
+  5. **Candidate feedback first (hard stop):** *"Run the tests yourself and take a minute on the diff. What's your feedback?"* Claude waits and applies the candidate's feedback before showing any reviewer findings, so the candidate forms their own view of the code first.
+  6. Reviewer findings are then raised **one question at a time**, most severe first; a list of five at once is overwhelming mid-interview.
+  7. Keep the `README.md` **Running and testing** section in sync. Commit with a meaningful message; the git history should tell the story.
 - **Time checkpoints** at about 15 min and about 22 min: compare the remaining IN estimates with the time left. If behind, propose moving an IN item to OUT. If ahead, pull the next STRETCH item. Log the decision.
 
 ### Phase 4: Wrap-up (25–30 min)
@@ -101,7 +104,7 @@ Lessons from rehearsal 1: the planning discussion went deep on persistence, whic
 1. Session header: start time, length, current phase
 2. Problem summary
 3. Scope matrix (estimate, running total, IN / STRETCH / OUT, cut line, keep-possible-later notes)
-4. Approach sketch (IN items only)
+4. Approach (IN items only), opening with a high-level architecture overview
 5. Parking lot
 6. Decision log: `decision | options considered | choice | why`
 7. Tracker: `slice / agent | status | notes`

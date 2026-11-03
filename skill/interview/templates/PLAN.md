@@ -21,6 +21,11 @@ Build budget: **<B> min** (≈60% of Phase 3) · IN total: **<sum> / <B> min**
 - 
 
 ## Approach (IN items only)
+**Architecture overview:**
+```
+<components and data flow, showing where new code fits into the repo>
+```
+
 - 
 
 ## Parking lot
